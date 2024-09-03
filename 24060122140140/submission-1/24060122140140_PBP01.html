@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Tambah Data Produk</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            width: 400px;
+            padding: 20px;
+            border: 1px solid #000;
+            border-radius: 5px;
+        }
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-direction: row;
+        }
+        label {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .label_grosir {
+            flex: 0.45;
+        }
+        input[type="text"], textarea, select {
+            flex: 2;
+            padding: 5px;
+        }
+        input[type="radio"], input[type="checkbox"] {
+            margin-right: 5px;
+        }
+        .form-group.radio-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .error {
+            color: red;
+            font-size: 12px;
+            margin-left: auto;
+        }
+        .captcha {
+            margin-top: 5px;
+            font-weight: bold;
+        }
+        .jasa_kirim {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-jasa {
+            
+            display:flex;
+            flex-direction: row;
+            align-items: center;
+        }
+        .label-jasa {
+            flex: 0.48;
+        }
+        .input-captcha {
+            width: 100px;
+            margin-right: 10px;
+        }
+        .label-captcha {
+            flex: 0.88;
+        }
+    </style>
+</head>
+<body>
+
+<form id="productForm">
+    <h3>Form Tambah Data Produk</h3>
+
+    <div class="form-group">
+        <label for="productName">Nama Produk</label>
+        <input type="text" id="productName" name="productName" minlength="5" maxlength="30">
+    </div>
+    <div id="productNameError" class="error"></div>
+
+    <div class="form-group">
+        <label for="description">Deskripsi</label>
+        <textarea id="description" name="description" minlength="5" maxlength="30"></textarea>
+    </div>
+    <div id="descriptionError" class="error"></div>
+
+    <div class="form-group">
+        <label for="category">Kategori</label>
+        <select id="category" name="category" onchange="updateSubCategory()">
+            <option value="">--Pilih Kategori--</option>
+            <option value="Baju">Baju</option>
+            <option value="Elektronik">Elektronik</option>
+            <option value="Alat Tulis">Alat Tulis</option>
+        </select>
+    </div>
+    <div id="categoryError" class="error"></div>
+
+    <div class="form-group">
+        <label for="subCategory">Sub Kategori</label>
+        <select id="subCategory" name="subCategory">
+            <option value="">--Pilih Sub Kategori--</option>
+        </select>
+    </div>
+    <div id="subCategoryError" class="error"></div>
+
+    <div class="form-group">
+        <label for="unitPrice">Harga Satuan</label>
+        <input type="text" id="unitPrice" name="unitPrice">
+    </div>
+    <div id="unitPriceError" class="error"></div>
+
+    <div class="form-group radio-group">
+        <label class="label_grosir">Grosir</label>
+        <input type="radio" id="wholesaleYes" name="wholesale" value="Yes" onclick="document.getElementById('wholesalePrice').disabled = false"> Ya
+        <input type="radio" id="wholesaleNo" name="wholesale" value="No" onclick="document.getElementById('wholesalePrice').disabled = true"> Tidak
+    </div>
+    <div id="wholesaleError" class="error"></div>
+
+    <div class="form-group">
+        <label for="wholesalePrice">Harga Grosir</label>
+        <input type="text" id="wholesalePrice" name="wholesalePrice">
+    </div>
+    <div id="wholesalePriceError" class="error"></div>
+
+    <div class="form-jasa">
+        <label class="label-jasa">Jasa Kirim</label>
+        <div class="jasa_kirim">
+            <label><input type="checkbox" name="shippingService" value="JNE"> JNE</label>
+            <label><input type="checkbox" name="shippingService" value="TIKI"> TIKI</label>
+            <label><input type="checkbox" name="shippingService" value="SiCepat"> SiCepat</label>
+            <label><input type="checkbox" name="shippingService" value="Ninja Express"> Ninja Express</label>
+            <label><input type="checkbox" name="shippingService" value="Wahana"> Wahana</label>
+        </div>
+    </div>
+    <div id="shippingServiceError" class="error"></div>
+
+    <div class="form-group">
+        <label for="captcha" class="label-captcha">Captcha</label>
+        <div class="form-jasa">
+            <input class="input-captcha" type="text" id="captcha" name="captchaCode" readonly>
+            <input class="input-captcha" type="text" id="captchaCodeInput" name="captcha-input">
+        </div>
+    </div>
+    
+    <div id="captchaError" class="error"></div>
+
+    <button type="submit">Submit</button>
+    <button type="reset">Reset</button>
+</form>
+
+<script>
+  
+    function updateSubCategory() {
+        const subCategory = document.getElementById("subCategory");
+        subCategory.innerHTML = '<option value="">--Pilih Sub Kategori--</option>';
+        const category = document.getElementById("category").value;
+        
+        let options = [];
+        if (category === "Baju") {
+            options = ["Baju Pria", "Baju Wanita", "Baju Anak"];
+        } else if (category === "Elektronik") {
+            options = ["Mesin Cuci", "Kulkas", "AC"];
+        } else if (category === "Alat Tulis") {
+            options = ["Kertas", "Map", "Pulpen"];
+        }
+
+        options.forEach(function(option) {
+            const newOption = document.createElement("option");
+            newOption.value = option;
+            newOption.text = option;
+            subCategory.add(newOption);
+        });
+    }
+
+  
+    function generateCaptcha() {
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        let captcha = "";
+        for (let i = 0; i < 5; i++) {
+            captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        document.getElementById("captcha").value = captcha;
+    }
+
+    // Form validation
+    document.getElementById("productForm").onsubmit = function(event) {
+        event.preventDefault();
+
+        let valid = true;
+        const productName = document.getElementById("productName").value;
+        const description = document.getElementById("description").value;
+        const category = document.getElementById("category").value;
+        const subCategory = document.getElementById("subCategory").value;
+        const unitPrice = document.getElementById("unitPrice").value;
+        const wholesaleYes = document.getElementById("wholesaleYes").checked;
+        const wholesalePrice = document.getElementById("wholesalePrice").value;
+        const captchaInput = document.getElementById("captchaCodeInput").value;
+        const captchaCode = document.getElementById("captcha").value;
+
+        // Validate Nama Produk
+        if (productName.length < 5 || productName.length > 30) {
+            valid = false;
+            document.getElementById("productNameError").innerText = "Nama Produk harus antara 5-30 karakter.";
+        } else {
+            document.getElementById("productNameError").innerText = "";
+        }
+
+        // Validate Deskripsi
+        if (description.length < 5 || description.length > 100) {
+            valid = false;
+            document.getElementById("descriptionError").innerText = "Deskripsi harus antara 5-100 karakter.";
+        } else {
+            document.getElementById("descriptionError").innerText = "";
+        }
+
+        // Validate Kategori
+        if (category === "") {
+            valid = false;
+            document.getElementById("categoryError").innerText = "Kategori harus dipilih.";
+        } else {
+            document.getElementById("categoryError").innerText = "";
+        }
+
+        // Validate Sub Kategori
+        if (subCategory === "") {
+            valid = false;
+            document.getElementById("subCategoryError").innerText = "Sub Kategori harus dipilih.";
+        } else {
+            document.getElementById("subCategoryError").innerText = "";
+        }
+
+        // Validate Harga Satuan
+        if (isNaN(unitPrice) || unitPrice === "") {
+            valid = false;
+            document.getElementById("unitPriceError").innerText = "Harga Satuan harus berupa angka.";
+        } else {
+            document.getElementById("unitPriceError").innerText = "";
+        }
+
+        // Validate Grosir dan Harga Grosir
+        if (wholesaleYes && (isNaN(wholesalePrice) || wholesalePrice === "")) {
+            valid = false;
+            document.getElementById("wholesalePriceError").innerText = "Harga Grosir harus diisi dan berupa angka jika Grosir dipilih Ya.";
+        } else {
+            document.getElementById("wholesalePriceError").innerText = "";
+        }
+
+        // Validate Jasa Kirim
+        const shippingServices = document.querySelectorAll('input[name="shippingService"]:checked');
+        if (shippingServices.length < 3) {
+            valid = false;
+            document.getElementById("shippingServiceError").innerText = "Minimal 3 Jasa Kirim harus dipilih.";
+        } else {
+            document.getElementById("shippingServiceError").innerText = "";
+        }
+
+        // Validate Captcha
+        if (captchaInput !== captchaCode) {
+            valid = false;
+            document.getElementById("captchaError").innerText = "Captcha tidak sesuai.";
+        } else {
+            document.getElementById("captchaError").innerText = "";
+        }
+
+        if (valid) {
+            alert("Form berhasil disubmit!");
+           
+        }
+    };
+
+    
+    window.onload = generateCaptcha;
+</script>
+
+</body>
+</html>
